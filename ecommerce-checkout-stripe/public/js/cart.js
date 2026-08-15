@@ -1,37 +1,59 @@
 // Motion via esm.sh — proper ESM, decisive brutalist micro-interactions
-import { animate } from 'https://esm.sh/motion@11';
+let animate = null;
+try {
+  const motionModule = await import('https://esm.sh/motion@11');
+  animate = motionModule.animate;
+} catch (e) {
+  console.warn('Motion library failed to load, falling back to CSS:', e.message);
+}
+
+function safeAnimate(el, keyframes, options) {
+  try {
+    if (animate && el) {
+      return animate(el, keyframes, options);
+    }
+  } catch (e) {
+    // silent fallback
+  }
+}
 
 // ── State ──────────────────────────────────────────────────────────────────
 let products = [];
 let cart     = JSON.parse(localStorage.getItem('cart') || '[]');
 
 // ── DOM refs ────────────────────────────────────────────────────────────────
-const grid        = document.getElementById('product-grid');
-const cartDrawer  = document.getElementById('cart-drawer');
-const cartOverlay = document.getElementById('cart-overlay');
-const cartItems   = document.getElementById('cart-items');
-const cartTotalEl = document.getElementById('cart-total');
-const cartCount   = document.getElementById('cart-count');
-const productCount = document.getElementById('product-count');
+let grid, cartDrawer, cartOverlay, cartItems, cartTotalEl, cartCount, productCount;
+
+function initDOM() {
+  grid        = document.getElementById('product-grid');
+  cartDrawer  = document.getElementById('cart-drawer');
+  cartOverlay = document.getElementById('cart-overlay');
+  cartItems   = document.getElementById('cart-items');
+  cartTotalEl = document.getElementById('cart-total');
+  cartCount   = document.getElementById('cart-count');
+  productCount = document.getElementById('product-count');
+}
 
 // ── Fetch & render products ──────────────────────────────────────────────────
 async function loadProducts() {
+  if (!grid) initDOM();
   try {
     const res = await fetch('/api/products');
-    if (!res.ok) throw new Error('Failed to fetch products');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     products  = await res.json();
-    productCount.textContent = `${products.length} items`;
+    if (productCount) productCount.textContent = `${products.length} items`;
     renderGrid();
   } catch (err) {
-    grid.innerHTML = `<div class="loading-state mono">FAILED TO LOAD CATALOG :(</div>`;
-    console.error(err);
+    if (grid) grid.innerHTML = `<div class="loading-state mono">FAILED TO LOAD CATALOG (${err.message})</div>`;
+    console.error('loadProducts error:', err);
   }
 }
 
 function renderGrid() {
+  if (!grid) return;
   grid.innerHTML = '';
 
-  if (products.length === 0) {
+  if (!Array.isArray(products) || products.length === 0) {
     grid.innerHTML = '<div class="empty-grid mono">NO PRODUCTS FOUND</div>';
     return;
   }
@@ -68,10 +90,10 @@ function renderGrid() {
 
     grid.appendChild(card);
 
-    // Staggered entrance — decisive, no bounce
-    animate(card,
+    // Staggered entrance
+    safeAnimate(card,
       { opacity: [0, 1], y: [12, 0] },
-      { delay: i * 0.055, duration: 0.2, easing: [0.2, 0, 0, 1] }
+      { delay: i * 0.03, duration: 0.2, easing: [0.2, 0, 0, 1] }
     );
   });
 
@@ -101,12 +123,11 @@ function addToCart(productId) {
   renderCartDrawer();
   openCart();
 
-  // Button press feedback
   const btn = document.getElementById(`add-${productId}`);
   if (btn) {
     btn.textContent = 'IN CART ✓';
     btn.classList.add('in-cart');
-    animate(btn, { scale: [1, 0.93, 1] }, { duration: 0.18, easing: 'ease-out' });
+    safeAnimate(btn, { scale: [1, 0.93, 1] }, { duration: 0.18, easing: 'ease-out' });
   }
 }
 
@@ -115,7 +136,6 @@ function removeFromCart(productId) {
   persistCart();
   renderCartDrawer();
 
-  // Reset button
   const btn = document.getElementById(`add-${productId}`);
   if (btn) {
     btn.textContent = 'ADD TO CART';
@@ -126,14 +146,12 @@ function removeFromCart(productId) {
 function persistCart() {
   localStorage.setItem('cart', JSON.stringify(cart));
   const total = cart.reduce((sum, i) => sum + i.quantity, 0);
-  cartCount.textContent = total;
-
-  // Pulse cart count on change
-  animate(cartCount, { scale: [1, 1.4, 1] }, { duration: 0.22, easing: 'ease-out' });
+  if (cartCount) cartCount.textContent = total;
+  if (cartCount) safeAnimate(cartCount, { scale: [1, 1.4, 1] }, { duration: 0.22, easing: 'ease-out' });
 }
 
-// ── Render cart drawer ────────────────────────────────────────────────────────
 function renderCartDrawer() {
+  if (!cartItems || !cartTotalEl) return;
   cartItems.innerHTML = '';
   let total = 0;
 
@@ -163,40 +181,52 @@ function renderCartDrawer() {
   });
 }
 
-// ── Drawer animations ─────────────────────────────────────────────────────────
 function openCart() {
+  if (!cartDrawer || !cartOverlay) return;
   cartDrawer.setAttribute('aria-hidden', 'false');
   cartOverlay.style.pointerEvents = 'auto';
 
-  animate(cartDrawer,  { x: [cartDrawer.offsetWidth, 0] },
-          { duration: 0.22, easing: [0.2, 0, 0, 1] });
-  animate(cartOverlay, { opacity: [0, 1] },
-          { duration: 0.22 });
+  safeAnimate(cartDrawer,  { x: [cartDrawer.offsetWidth || 320, 0] },
+              { duration: 0.22, easing: [0.2, 0, 0, 1] });
+  safeAnimate(cartOverlay, { opacity: [0, 1] },
+              { duration: 0.22 });
 }
 
 function closeCart() {
-  animate(cartDrawer,  { x: [0, cartDrawer.offsetWidth] },
-          { duration: 0.18, easing: [0.4, 0, 1, 1] })
-    .finished.then(() => {
-      cartDrawer.setAttribute('aria-hidden', 'true');
-      cartOverlay.style.pointerEvents = 'none';
-    });
-  animate(cartOverlay, { opacity: [1, 0] }, { duration: 0.18 });
+  if (!cartDrawer || !cartOverlay) return;
+  const finish = () => {
+    cartDrawer.setAttribute('aria-hidden', 'true');
+    cartOverlay.style.pointerEvents = 'none';
+  };
+
+  const anim = safeAnimate(cartDrawer,  { x: [0, cartDrawer.offsetWidth || 320] },
+                           { duration: 0.18, easing: [0.4, 0, 1, 1] });
+  if (anim && anim.finished) {
+    anim.finished.then(finish);
+  } else {
+    finish();
+  }
+  safeAnimate(cartOverlay, { opacity: [1, 0] }, { duration: 0.18 });
 }
 
-// ── Events ────────────────────────────────────────────────────────────────────
-document.getElementById('cart-toggle').addEventListener('click', openCart);
-document.getElementById('cart-close').addEventListener('click', closeCart);
-cartOverlay.addEventListener('click', closeCart);
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initDOM();
+  const toggleBtn = document.getElementById('cart-toggle');
+  const closeBtn  = document.getElementById('cart-close');
+  if (toggleBtn) toggleBtn.addEventListener('click', openCart);
+  if (closeBtn)  closeBtn.addEventListener('click', closeCart);
+  if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 
-// Keyboard: Escape closes drawer
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && cartDrawer.getAttribute('aria-hidden') === 'false') {
-    closeCart();
-  }
+  loadProducts();
+  persistCart();
+  renderCartDrawer();
 });
 
-// ── Init ──────────────────────────────────────────────────────────────────────
-loadProducts();
-persistCart();
-renderCartDrawer();
+// Fallback init if DOM is already loaded
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  initDOM();
+  loadProducts();
+  persistCart();
+  renderCartDrawer();
+}
