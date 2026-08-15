@@ -214,9 +214,29 @@ function animateHero() {
   const heroTag   = document.querySelector('.hero-tag');
   const heroSub   = document.querySelector('.hero-sub');
   
-  if (heroTitle) safeAnimate(heroTitle, { opacity: [0, 1], y: [20, 0] }, { duration: 0.35, easing: [0.2, 0, 0, 1] });
-  if (heroTag)   safeAnimate(heroTag,   { opacity: [0, 1], x: [-15, 0] }, { delay: 0.15, duration: 0.25 });
-  if (heroSub)   safeAnimate(heroSub,   { opacity: [0, 0.5], y: [10, 0] }, { delay: 0.25, duration: 0.2 });
+  if (heroTitle && !heroTitle.dataset.animated) {
+    heroTitle.dataset.animated = 'true';
+    const lines = heroTitle.innerHTML.split('<br>');
+    
+    heroTitle.innerHTML = lines.map(line => {
+      const words = line.replace(/<[^>]*>/g, '').trim().split(/\s+/);
+      return words.map(word => {
+        const chars = Array.from(word).map(char => `<span class="hero-char">${char}</span>`).join('');
+        return `<span class="hero-word">${chars}</span>`;
+      }).join(' ');
+    }).join('<br/>');
+
+    const chars = heroTitle.querySelectorAll('.hero-char');
+    chars.forEach((char, i) => {
+      safeAnimate(char, 
+        { opacity: [0, 1], y: [35, 0], rotateX: [-60, 0] }, 
+        { delay: i * 0.03, duration: 0.25, easing: [0.2, 0, 0, 1] }
+      );
+    });
+  }
+
+  if (heroTag) safeAnimate(heroTag, { opacity: [0, 1], scale: [0.85, 1.05, 1] }, { delay: 0.35, duration: 0.25 });
+  if (heroSub) safeAnimate(heroSub, { opacity: [0, 0.5], y: [10, 0] }, { delay: 0.45, duration: 0.2 });
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
