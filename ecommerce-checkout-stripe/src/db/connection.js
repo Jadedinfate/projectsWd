@@ -15,20 +15,28 @@ if (connectionString) {
   sql = neon(connectionString);
   console.log('⚡ Connected to Neon PostgreSQL Database via HTTP driver!');
 } else {
-  const Database = require('better-sqlite3');
+  let Database;
+  try {
+    const dynamicReq = eval('require');
+    Database = dynamicReq('better-sqlite3');
+  } catch (e) {
+    console.warn('SQLite not loaded (running in serverless mode):', e.message);
+  }
   const isVercel = Boolean(process.env.VERCEL);
   const DB_PATH = isVercel
     ? path.join('/tmp', 'store.db')
     : path.join(__dirname, '../../data/store.db');
 
   fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-  sqliteDb = new Database(DB_PATH);
-  sqliteDb.pragma('journal_mode = WAL');
-  sqliteDb.pragma('foreign_keys = ON');
+  if (Database) {
+    sqliteDb = new Database(DB_PATH);
+    sqliteDb.pragma('journal_mode = WAL');
+    sqliteDb.pragma('foreign_keys = ON');
 
-  const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
-  sqliteDb.exec(schema);
-  console.log('📁 Using local SQLite database:', DB_PATH);
+    const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+    sqliteDb.exec(schema);
+    console.log('📁 Using local SQLite database:', DB_PATH);
+  }
 }
 
 // ── Unified Async Database API ──────────────────────────────────────────────
