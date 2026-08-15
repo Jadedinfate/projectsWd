@@ -1,5 +1,5 @@
 const express                       = require('express');
-const { v4: uuidv4 }                = require('uuid');
+const { randomUUID: uuidv4 }        = require('crypto');
 const db                            = require('../db/connection');
 const stripe                        = require('../services/stripeClient');
 const { recalculateTotal }          = require('../services/pricing');

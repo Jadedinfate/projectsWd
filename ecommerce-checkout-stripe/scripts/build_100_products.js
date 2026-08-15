@@ -42,7 +42,7 @@ async function build100Products() {
 
   const seedFileContent = `require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const db = require('../src/db/connection');
-const { v4: uuidv4 } = require('uuid');
+const { randomUUID: uuidv4 } = require('crypto');
 
 const products = ${JSON.stringify(formattedProducts, null, 2)}.map(p => ({
   id: uuidv4(),
