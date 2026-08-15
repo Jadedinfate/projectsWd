@@ -209,6 +209,16 @@ function closeCart() {
   safeAnimate(cartOverlay, { opacity: [1, 0] }, { duration: 0.18 });
 }
 
+function animateHero() {
+  const heroTitle = document.querySelector('.hero-stripe h1');
+  const heroTag   = document.querySelector('.hero-tag');
+  const heroSub   = document.querySelector('.hero-sub');
+  
+  if (heroTitle) safeAnimate(heroTitle, { opacity: [0, 1], y: [20, 0] }, { duration: 0.35, easing: [0.2, 0, 0, 1] });
+  if (heroTag)   safeAnimate(heroTag,   { opacity: [0, 1], x: [-15, 0] }, { delay: 0.15, duration: 0.25 });
+  if (heroSub)   safeAnimate(heroSub,   { opacity: [0, 0.5], y: [10, 0] }, { delay: 0.25, duration: 0.2 });
+}
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initDOM();
@@ -218,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (closeBtn)  closeBtn.addEventListener('click', closeCart);
   if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
 
+  animateHero();
   loadProducts();
   persistCart();
   renderCartDrawer();
@@ -226,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Fallback init if DOM is already loaded
 if (document.readyState === 'complete' || document.readyState === 'interactive') {
   initDOM();
+  animateHero();
   loadProducts();
   persistCart();
   renderCartDrawer();
