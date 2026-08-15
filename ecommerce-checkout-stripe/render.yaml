@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: brutalist-stripe-checkout
+    env: node
+    buildCommand: npm ci && node scripts/seed.js
+    startCommand: node src/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false

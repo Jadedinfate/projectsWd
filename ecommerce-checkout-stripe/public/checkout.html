@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout — RAW STORE</title>
+  <meta name="description" content="Complete your purchase securely." />
+  <link rel="stylesheet" href="/css/tokens.css"/>
+  <link rel="stylesheet" href="/css/checkout.css"/>
+  <!-- Stripe.js MUST load from Stripe CDN for PCI compliance -->
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <a href="/" class="site-logo display">RAW//STORE</a>
+    <span class="checkout-label mono">SECURE CHECKOUT</span>
+  </header>
+
+  <main class="checkout-layout">
+
+    <!-- LEFT: Order Summary (dark) -->
+    <section class="order-summary" aria-label="Order summary">
+      <h1 class="section-title display">YOUR<br/>ORDER</h1>
+      <ul id="summary-items" class="summary-items" role="list"></ul>
+      <div class="summary-divider"></div>
+      <div class="summary-total">
+        <span class="summary-total-label">TOTAL</span>
+        <span id="summary-total" class="summary-total-value mono">$0.00</span>
+      </div>
+    </section>
+
+    <!-- RIGHT: Payment (light) -->
+    <section class="payment-section" aria-label="Payment">
+      <div class="payment-mode-banner">SECURE PAYMENT — POWERED BY STRIPE</div>
+
+      <form id="payment-form" novalidate>
+        <div class="field-group">
+          <label for="email" class="field-label">EMAIL</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="field-input mono"
+            placeholder="you@example.com"
+            required
+            autocomplete="email"
+          />
+          <span id="email-error" class="field-error" role="alert"></span>
+        </div>
+
+        <!-- Stripe Payment Element -->
+        <div class="field-label" style="margin-bottom:8px">CARD DETAILS</div>
+        <div id="payment-element" class="stripe-mount">
+          <p class="stripe-loading mono">LOADING PAYMENT FORM...</p>
+        </div>
+        <span id="stripe-error" class="field-error" role="alert"></span>
+
+        <button id="submit-btn" type="submit" class="btn-pay" disabled>
+          <span id="btn-label">PAY NOW</span>
+          <span id="btn-spinner" class="spinner" aria-label="Processing"></span>
+        </button>
+
+        <p class="pci-note">
+          Card data is collected by Stripe — it never touches our server.
+        </p>
+      </form>
+
+      <!-- Success state (hidden until payment confirmed) -->
+      <div id="success-state" class="success-state" hidden>
+        <div class="success-icon">✓</div>
+        <h2 class="display">PAYMENT<br/>CONFIRMED</h2>
+        <p id="order-id-display" class="success-order-id mono"></p>
+        <a href="/" class="btn-secondary">← BACK TO STORE</a>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="/js/checkout.js"></script>
+</body>
+</html>

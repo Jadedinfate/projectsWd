@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAW STORE — Brutalist Commerce</title>
+  <meta name="description" content="Bold, honest, minimal clothing. No noise. Just product." />
+  <link rel="stylesheet" href="/css/tokens.css" />
+  <link rel="stylesheet" href="/css/store.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <span class="site-logo display">RAW//STORE</span>
+    <button id="cart-toggle" class="cart-btn" aria-label="Open cart">
+      CART <span id="cart-count" class="mono">0</span>
+    </button>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero-stripe" aria-label="Hero">
+    <h1 class="display">NO NOISE.<br/>JUST<br/>PRODUCT.</h1>
+    <span class="hero-tag">AW/2025 COLLECTION</span>
+    <p class="hero-sub">Structural. Honest. Limited runs.</p>
+  </section>
+
+  <!-- GRID HEADER -->
+  <div class="grid-header">
+    <span class="grid-header-label mono">CATALOG</span>
+    <span id="product-count" class="grid-header-label mono">— items</span>
+  </div>
+
+  <!-- PRODUCT GRID -->
+  <main id="product-grid" class="product-grid" role="list" aria-label="Product catalog">
+    <div class="loading-state mono">LOADING CATALOG...</div>
+  </main>
+
+  <!-- CART DRAWER -->
+  <aside id="cart-drawer" class="cart-drawer" aria-label="Cart" aria-hidden="true">
+    <div class="cart-header">
+      <span class="cart-title display">CART</span>
+      <button id="cart-close" class="close-btn" aria-label="Close cart">✕</button>
+    </div>
+    <ul id="cart-items" class="cart-items" role="list"></ul>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label">TOTAL</span>
+        <span id="cart-total" class="cart-total-value mono">$0.00</span>
+      </div>
+      <a href="/checkout.html" id="checkout-link" class="btn-primary">CHECKOUT →</a>
+    </div>
+  </aside>
+
+  <!-- OVERLAY -->
+  <div id="cart-overlay" class="cart-overlay" aria-hidden="true"></div>
+
+  <script type="module" src="/js/cart.js"></script>
+</body>
+</html>

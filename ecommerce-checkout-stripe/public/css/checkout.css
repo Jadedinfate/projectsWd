@@ -1,0 +1,279 @@
+/* ── LAYOUT ──────────────────────────────────────────────────────────────── */
+.checkout-layout {
+  display:             grid;
+  grid-template-columns: 1fr 1fr;
+  min-height:          calc(100vh - 64px);
+}
+
+@media (max-width: 780px) {
+  .checkout-layout { grid-template-columns: 1fr; }
+}
+
+/* ── ORDER SUMMARY (dark side) ───────────────────────────────────────────── */
+.order-summary {
+  padding:    48px 40px;
+  background: var(--ink);
+  color:      var(--paper);
+  border-right: var(--border);
+}
+
+.section-title {
+  font-family:    var(--font-display);
+  font-size:      var(--size-xl);
+  font-weight:    900;
+  letter-spacing: -0.03em;
+  line-height:    0.92;
+  margin-bottom:  36px;
+}
+
+.summary-items {
+  list-style: none;
+  padding:    0;
+  margin:     0;
+}
+
+.summary-line {
+  display:    grid;
+  grid-template-columns: 1fr auto auto;
+  gap:        16px;
+  align-items: center;
+  padding:    14px 0;
+  border-bottom: 1px solid rgba(250,250,247,0.12);
+  opacity:    0;   /* animated in by JS */
+}
+
+.summary-line-name {
+  font-size:   var(--size-sm);
+  font-weight: 500;
+}
+
+.summary-line-qty {
+  font-family: var(--font-mono);
+  font-size:   var(--size-xs);
+  opacity:     0.5;
+}
+
+.summary-line-price {
+  font-family: var(--font-mono);
+  font-size:   var(--size-sm);
+  font-weight: 700;
+}
+
+.summary-divider {
+  border-top:  2px solid rgba(250,250,247,0.2);
+  margin:      24px 0;
+}
+
+.summary-total {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+}
+
+.summary-total-label {
+  font-family:    var(--font-mono);
+  font-size:      var(--size-xs);
+  font-weight:    700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity:        0.5;
+}
+
+.summary-total-value {
+  font-family: var(--font-mono);
+  font-size:   var(--size-lg);
+  font-weight: 700;
+  color:       var(--accent-lime);
+}
+
+/* ── PAYMENT FORM (light side) ───────────────────────────────────────────── */
+.payment-section {
+  padding:    48px 40px;
+  background: var(--paper);
+}
+
+.payment-mode-banner {
+  font-family:    var(--font-mono);
+  font-size:      var(--size-xs);
+  font-weight:    700;
+  letter-spacing: 0.14em;
+  color:          var(--accent-blue);
+  text-transform: uppercase;
+  padding-bottom: 16px;
+  border-bottom:  var(--border);
+  margin-bottom:  32px;
+}
+
+/* Fields */
+.field-group { margin-bottom: 24px; }
+
+.field-label {
+  display:        block;
+  font-family:    var(--font-mono);
+  font-size:      11px;
+  font-weight:    700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom:  6px;
+  color:          var(--ink);
+}
+
+.field-input {
+  width:       100%;
+  padding:     10px 12px;
+  border:      var(--border);
+  box-shadow:  var(--shadow-hard);
+  font-family: var(--font-mono);
+  font-size:   var(--size-sm);
+  background:  var(--paper);
+  color:       var(--ink);
+  outline:     none;
+  transition:  border-color 0.1s, box-shadow 0.1s;
+}
+
+.field-input:focus {
+  border-color: var(--accent-blue);
+  box-shadow:   4px 4px 0 var(--accent-blue);
+  outline:      3px solid var(--accent-lime);
+  outline-offset: 2px;
+}
+
+.field-error {
+  display:     block;
+  color:       var(--accent-red);
+  font-family: var(--font-mono);
+  font-size:   var(--size-xs);
+  margin-top:  4px;
+  min-height:  18px;
+}
+
+/* Stripe Elements mount */
+.stripe-mount {
+  border:      var(--border);
+  box-shadow:  var(--shadow-hard);
+  padding:     16px;
+  margin-bottom: 24px;
+  min-height:  120px;
+  background:  var(--paper);
+}
+
+.stripe-loading {
+  font-family:    var(--font-mono);
+  font-size:      var(--size-xs);
+  opacity:        0.3;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding:        16px 0;
+}
+
+/* Submit button */
+.btn-pay {
+  width:          100%;
+  padding:        16px;
+  background:     var(--accent-blue);
+  color:          var(--paper);
+  border:         var(--border);
+  box-shadow:     var(--shadow-hard);
+  font-family:    var(--font-mono);
+  font-size:      var(--size-sm);
+  font-weight:    700;
+  letter-spacing: 0.08em;
+  cursor:         pointer;
+  transition:     transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+  gap:            10px;
+}
+
+.btn-pay:hover:not(:disabled) {
+  transform:  translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--ink);
+}
+
+.btn-pay:active:not(:disabled) {
+  transform:  translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+.btn-pay:disabled {
+  opacity: 0.45;
+  cursor:  not-allowed;
+}
+
+.spinner {
+  width:    18px;
+  height:   18px;
+  border:   2px solid rgba(250,250,247,0.3);
+  border-top-color: var(--paper);
+  border-radius:    50%;
+  animation: spin 0.6s linear infinite;
+  display:   none;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.pci-note {
+  font-family:    var(--font-mono);
+  font-size:      11px;
+  opacity:        0.4;
+  margin-top:     14px;
+  text-align:     center;
+  letter-spacing: 0.04em;
+}
+
+/* ── SUCCESS STATE ────────────────────────────────────────────────────────── */
+.success-state {
+  text-align: center;
+  padding:    48px 0;
+}
+
+.success-icon {
+  font-size:     48px;
+  margin-bottom: 16px;
+}
+
+.success-state h2 {
+  font-family:    var(--font-display);
+  font-size:      var(--size-xl);
+  font-weight:    900;
+  letter-spacing: -0.03em;
+  margin-bottom:  12px;
+  color:          var(--ink);
+}
+
+.success-order-id {
+  font-family: var(--font-mono);
+  font-size:   var(--size-xs);
+  opacity:     0.5;
+  margin-bottom: 32px;
+}
+
+.btn-secondary {
+  display:        inline-block;
+  padding:        12px 28px;
+  border:         var(--border);
+  box-shadow:     var(--shadow-hard);
+  font-family:    var(--font-mono);
+  font-size:      var(--size-xs);
+  font-weight:    700;
+  letter-spacing: 0.08em;
+  color:          var(--ink);
+  text-decoration: none;
+  transition:      background 0.1s, color 0.1s;
+}
+
+.btn-secondary:hover {
+  background: var(--ink);
+  color:      var(--paper);
+}
+
+/* ── CHECKOUT HEADER ─────────────────────────────────────────────────────── */
+.checkout-label {
+  font-family:    var(--font-mono);
+  font-size:      var(--size-xs);
+  font-weight:    700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity:        0.5;
+}

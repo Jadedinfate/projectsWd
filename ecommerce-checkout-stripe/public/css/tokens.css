@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap');
+
+:root {
+  --ink:         #111111;
+  --paper:       #FAFAF7;
+  --accent-blue: #2B2FF0;
+  --accent-red:  #FF3E1F;
+  --accent-lime: #C9FF3D;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+
+  --shadow-hard:  4px 4px 0 var(--ink);
+  --border:       2px solid var(--ink);
+  --radius:       0px;
+
+  --size-xs:  14px;
+  --size-sm:  16px;
+  --size-md:  20px;
+  --size-lg:  32px;
+  --size-xl:  56px;
+  --size-2xl: 96px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background:  var(--paper);
+  color:       var(--ink);
+  font-family: var(--font-body);
+  font-size:   var(--size-sm);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.mono    { font-family: var(--font-mono); }
+.display { font-family: var(--font-display); }
+
+/* Focus rings — both accessible and on-brand */
+:focus-visible {
+  outline:        3px solid var(--accent-lime);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:   0.01ms !important;
+    transition-duration:  0.01ms !important;
+  }
+}
