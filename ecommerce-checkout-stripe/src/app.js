@@ -21,9 +21,12 @@ app.use('/api/products', require('./routes/products'));
 app.use('/api/checkout', require('./routes/checkout'));
 app.use('/api/orders',   require('./routes/orders'));
 
-// ── Catch-all static route fallback for SPA frontend ─────────────────────
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+// ── Catch-all static route fallback for SPA frontend (Express 5 compatible) ─
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api/')) {
+    return res.sendFile(path.join(__dirname, '../public/index.html'));
+  }
+  next();
 });
 
 // ── Global error handler (must be last) ──────────────────────────────────
